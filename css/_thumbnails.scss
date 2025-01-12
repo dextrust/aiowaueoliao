@@ -1,0 +1,20 @@
+// _thumbnails.scss
+.thumbnail-container {
+    max-width: 150px;
+    overflow: hidden;
+
+    a img {
+        width: 100%;
+        height: auto;
+        display: block;
+        transition: transform 0.3s ease;
+
+        &:hover {
+            transform: scale(1.05);
+        }
+    }
+    
+    @media (min-width: 768px) {
+        max-width: 200px;
+    }
+}
