@@ -1,84 +1,49 @@
 <?php
-// Theme setup
-function mytheme_setup() {
-    // Make theme available for translation
-    load_theme_textdomain('mytheme', get_template_directory() . '/languages');
+// Include the Bootstrap 5 Nav Walker
+require_once get_template_directory() . '/css/class-bootstrap-5-nav-walker.php';
 
-    // Add default posts and comments RSS feed links to head
-    add_theme_support('automatic-feed-links');
-
-    // Let WordPress manage the document title
-    add_theme_support('title-tag');
-
-    // Enable support for Post Thumbnails on posts and pages
-    add_theme_support('post-thumbnails');
-
-    // Register primary menu
-    register_nav_menus(array(
-        'primary' => __('Primary Menu', 'mytheme'),
-    ));
-
-    // Switch default core markup for search form, comment form, and comments to output valid HTML5
-    add_theme_support('html5', array(
-        'search-form',
-        'comment-form',
-        'comment-list',
-        'gallery',
-        'caption',
-    ));
-
-    // Enable support for Post Formats
-    add_theme_support('post-formats', array(
-        'aside',
-        'image',
-        'video',
-        'quote',
-        'link',
-    ));
-
-    // Set up the WordPress core custom background feature
-    add_theme_support('custom-background', apply_filters('mytheme_custom_background_args', array(
-        'default-color' => 'ffffff',
-        'default-image' => '',
-    )));
+// Load CSS
+function mytheme_load_css() {
+    wp_register_style('bootstrap', get_template_directory_uri() . '/css/bootstrap.min.css', array(), '5.1.3', 'all');
+    wp_enqueue_style('bootstrap');
+    wp_register_style('main', get_template_directory_uri() . '/css/main.css', array('bootstrap'), filemtime(get_template_directory() . '/css/main.css'), 'all');
+    wp_enqueue_style('main');
 }
-add_action('after_setup_theme', 'mytheme_setup');
+add_action('wp_enqueue_scripts', 'mytheme_load_css');
 
-// Enqueue scripts and styles
-function mytheme_scripts() {
-    // Enqueue main stylesheet
-    wp_enqueue_style('mytheme-style', get_stylesheet_uri());
-
-    // Enqueue Bootstrap CSS
-    wp_enqueue_style('bootstrap-css', get_template_directory_uri() . '/css/bootstrap.min.css');
-
-    // Enqueue custom CSS
-    wp_enqueue_style('custom-css', get_template_directory_uri() . '/css/custom.css');
-
-    // Enqueue jQuery (comes with WordPress)
+// Load JavaScript
+function mytheme_load_js() {
     wp_enqueue_script('jquery');
-
-    // Enqueue Bootstrap JS
-    wp_enqueue_script('bootstrap-js', get_template_directory_uri() . '/js/bootstrap.bundle.min.js', array('jquery'), null, true);
-
-    // Enqueue custom JS
-    wp_enqueue_script('custom-js', get_template_directory_uri() . '/js/custom.js', array('jquery'), null, true);
+    wp_register_script('bootstrap', get_template_directory_uri() . '/js/bootstrap.min.js', array('jquery'), '5.1.3', true);
+    wp_enqueue_script('bootstrap');
 }
-add_action('wp_enqueue_scripts', 'mytheme_scripts');
+add_action('wp_enqueue_scripts', 'mytheme_load_js');
 
-// Register widget area
-function mytheme_widgets_init() {
-    register_sidebar(array(
-        'name'          => __('Sidebar', 'mytheme'),
-        'id'            => 'sidebar-1',
-        'description'   => __('Add widgets here.', 'mytheme'),
-        'before_widget' => '<section id="%1$s" class="widget %2$s">',
-        'after_widget'  => '</section>',
-        'before_title'  => '<h2 class="widget-title">',
-        'after_title'   => '</h2>',
+// Enable Theme Support for Menus
+add_theme_support('menus');
+
+// Register Menus
+function mytheme_register_menus() {
+    register_nav_menus(array(
+        'top-menu' => __('Top Menu', 'textdomain'),
+        'mobile-menu' => __('Mobile Menu', 'textdomain'),
     ));
 }
-add_action('widgets_init', 'mytheme_widgets_init');
+add_action('init', 'mytheme_register_menus');
 
-// Include custom navigation walker for Bootstrap
-require get_template_directory() . '/inc/class-wp-bootstrap-navwalker.php';
+add_theme_support('post-thumbnails');
+add_image_size('custom-thumb', 500, 400, true);
+
+// Enable Theme Support for Widgets
+add_theme_support('widgets');
+
+function my_sidebars(){
+    register_sidebar(array(
+        'name' => 'Page_Sidebar',
+        'id' => 'page-sidebar',
+        'before_title' => '<h4 class="widget_title">',
+        'after_title' => '</h4>'
+    ));
+}
+add_action('widgets_init', 'my_sidebars');
+?>
